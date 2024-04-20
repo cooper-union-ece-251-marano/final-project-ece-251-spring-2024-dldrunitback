@@ -17,7 +17,7 @@
 `define ADDER
 `timescale 1ns/100ps
 
-module adder # (parameter N = 8)
+module adder # (parameter N = 16)
    //
    // ---------------- PORT DEFINITIONS ----------------
    (
