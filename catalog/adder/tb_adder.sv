@@ -15,10 +15,10 @@
 `include "./adder.sv"
 
 module tb_adder;
-  parameter N = 8;
-  reg [7:0] a, b;   // adding 2 8bit numbers
+  parameter N = 16;
+  reg [15:0] a, b;   // adding 2 8bit numbers
   reg enable, cin;
-  wire [7:0] S;
+  wire [15:0] S;
   wire Cout;
 
 
@@ -35,8 +35,8 @@ module tb_adder;
    initial
    begin: apply_stimulus
 
-     reg[7:0] invect; //invect[7] terminates the for loop
-     for (int i = 0; i < 256; i++)
+     reg[15:0] invect; //invect[7] terminates the for loop
+     for (int i = 0; i < 256; i++)// just an example - goes up to 65536
       begin
         invect = i;
          a = invect; // a will increase during this test, but can be anything
