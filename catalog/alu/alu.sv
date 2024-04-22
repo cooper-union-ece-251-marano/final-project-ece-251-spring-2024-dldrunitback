@@ -19,10 +19,10 @@ module ALU16Bit #(parameter n = 16) (
     //
     // ---------------- PORT DEFINITIONS ----------------
     //
-    input [3:0] ALUControl, 
+    input [3:0] alu_control, 
     input [n-1:0] A, B, 
-    output reg [n-1:0] ALUResult, 
-    output reg Zero // Zero=1 if ALUResult == 0
+    output reg [n-1:0] alu_result, 
+    output reg Zero // Zero=1 if alu_result == 0
 );
     //
     // ---------------- MODULE DESIGN IMPLEMENTATION ----------------
@@ -31,26 +31,28 @@ module ALU16Bit #(parameter n = 16) (
     integer i;
     reg [n-1:0] y; // temp reg
 
-    always @(ALUControl, A, B) begin
-        case (ALUControl)
-            0: ALUResult <= A & B; // AND
-            1: ALUResult <= A | B; // OR
-            2: ALUResult <= A + B; // ADD
-            6: ALUResult <= A + (~B + 1); // SUB 
-            7: ALUResult <= (A < B) ? 1 : 0; // SLT 
-            3: ALUResult <= ~(A | B); // NOR
-            9: ALUResult <= A * B; // MUL
-            10: ALUResult <= A << B; // SLL 
-            11: ALUResult <= (A > B) ? 1 : 0; // SGT 
+    always @(alu_control, A, B) begin
+        case (alu_control)
+            0: alu_result <= A & B; // AND
+            1: alu_result <= A | B; // OR
+            2: alu_result <= A + B; // ADD
+            6: alu_result <= A + (~B + 1); // SUB 
+            7: alu_result <= (A < B) ? 1 : 0; // SLT 
+            3: alu_result <= ~(A | B); // NOR
+            8: begin //none
+                end
+            9: alu_result <= A * B; // MUL
+            10: alu_result <= A << B; // SLL 
+            11: alu_result <= (A > B) ? 1 : 0; // SGT 
             12: begin // CLO (Count Leading Ones) / CLZ (Count Leading Zeroes)
                 integer count;
-                ALUResult = 0;
+                alu_result = 0;
                 if (B == 0) begin // CLO
                     count = 0;
                     for (i = n - 1; i >= 0; i = i - 1) begin
                         if (A[i] == 1) begin
                             count = n - 1 - i;
-                            ALUResult = count;
+                            alu_result = count;
                             i = -1; // terminate loop
                         end
                     end
@@ -59,7 +61,7 @@ module ALU16Bit #(parameter n = 16) (
                     for (i = n - 1; i >= 0; i = i - 1) begin
                         if (A[i] == 0) begin
                             count = n - 1 - i;
-                            ALUResult = count;
+                            alu_result = count;
                             i = -1; // terminate 
                         end
                     end
@@ -76,24 +78,24 @@ module ALU16Bit #(parameter n = 16) (
                         y = {1'b0, y[n-1:1]};
                     end
                 end
-                ALUResult = y;
+                alu_result = y;
             end
-            4: ALUResult <= A ^ B; // XOR
-            14: ALUResult <= A < B; // SLTU 
+            4: alu_result <= A ^ B; // XOR
+            14: alu_result <= A < B; // SLTU 
             5: begin // Sign Extension
                 if (B == 0) begin // Byte (8-bit sign extension)
-                    ALUResult <= {{8{A[7]}}, A[7:0]};
+                    alu_result <= {{8{A[7]}}, A[7:0]};
                 end else if (B == 1) begin // Half-word (16-bit sign extension)
-                    ALUResult <= {{8{A[15]}}, A[15:0]};
+                    alu_result <= {{8{A[15]}}, A[15:0]};
                 end
             end
-            15: ALUResult <= (A >> B) | ({n{A[n-1]}} << (n - B)); // SRA (Arithmetic right shift)
+            15: alu_result <= (A >> B) | ({n{A[n-1]}} << (n - B)); // SRA (Arithmetic right shift)
         endcase
     end
 
-    // Check if ALUResult is zero 
-    always @(ALUResult) begin
-        Zero <= (ALUResult == 0) ? 1 : 0;
+    // Check if alu_result is zero 
+    always @(alu_result) begin
+        Zero <= (alu_result == 0) ? 1 : 0;
     end
 
 endmodule
