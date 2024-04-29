@@ -1,11 +1,11 @@
 //////////////////////////////////////////////////////////////////////////////////
 // The Cooper Union
 // ECE 251 Spring 2024
-// Engineer: YOUR NAMES
+// Engineer: Isabel Zulawski & Siann Han
 // 
-//     Create Date: 2023-02-07
+//     Create Date: 2024-05-28
 //     Module Name: aludec
-//     Description: 32-bit RISC ALU decoder
+//     Description: 16-bit RISC ALU decoder
 //
 // Revision: 1.0
 //

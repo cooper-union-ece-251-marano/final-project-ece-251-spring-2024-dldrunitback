@@ -3,9 +3,9 @@
 // ECE 251 Spring 2024
 // Engineer: Isabel Zulawski & Siann Han
 // 
-//     Create Date: 2023-02-07
+//     Create Date: 2024-05-28
 //     Module Name: alu
-//     Description: 32-bit RISC-based CPU alu (MIPS)
+//     Description: 16-bit RISC-based CPU alu (MIPS)
 //
 // Revision: 1.0
 // Based on https://github.com/Caskman/MIPS-Processor-in-Verilog/blob/master/ALU32Bit.v
