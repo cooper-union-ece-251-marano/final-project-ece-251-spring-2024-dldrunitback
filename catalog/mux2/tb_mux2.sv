@@ -16,7 +16,7 @@
 `include "./mux2.sv"
 
 module tb_mux2;
-   parameter N = 8;
+   parameter N = 16;
    reg [N-1:0] a, b;
    reg sel, enable;   //inputs are reg for test bench
    wire [N-1:0] y;     //outputs are wire for test bench

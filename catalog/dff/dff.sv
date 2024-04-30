@@ -14,13 +14,11 @@
 `define DFF
 `timescale 1ns/100ps
 
-`include "./dff.sv"
-
 module dff # (parameter n = 16)
    //
    // ---------------- PORT DEFINITIONS ----------------
    //
-   (input logic [n-1:0] d, input clk, rst, en, output logic [n-1:0] q, output logic [n-1:0] qn);
+   (input logic [n-1:0] d, input clk, rst, en, output logic [n-1:0] q);// output logic [n-1:0] qn);
    //
    // ---------------- MODULE DESIGN IMPLEMENTATION ----------------
 always @ (posedge clk, posedge rst) begin
@@ -29,18 +27,18 @@ always @ (posedge clk, posedge rst) begin
              if (rst) // 0 on reset
                 begin
                     q  = 0;
-                    qn = ~q;
+                    //qn = ~q;
                  end
              else // q follows d, posedge triggered
                  begin
                      q  <= d;
-                     qn <= ~d;
+                    // qn <= ~d;
                  end
          end
               else
                   begin
                      assign q = 'bz;
-                     assign qn ='bz;
+                     //assign qn ='bz;
                   end
 end
 endmodule

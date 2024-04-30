@@ -25,7 +25,7 @@ module tb_dff;
 
      reg [15:0] d;
   reg clk, rst, en; //inputs are reg for test bench
-  wire [15:0] q, qn;     //outputs are wire for test bench
+  wire [15:0] q; //, qn;     //outputs are wire for test bench
 
    //
     //

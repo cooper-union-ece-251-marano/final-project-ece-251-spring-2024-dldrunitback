@@ -13,15 +13,15 @@
 `ifndef MUX2
 `define MUX2
 
-module mux2 # (parameter N = 8)
+module mux2 # (parameter N = 16)
    //
    // ---------------- PORT DEFINITIONS ----------------
    //
    (
-      input [7:0] a, b,
+      input [15:0] a, b,
       input sel, enable, // y=a if sel=0; y=b if sel=1
-      output reg [7:0] y,
-      output reg [7:0] temp
+      output reg [15:0] y,
+      output reg [15:0] temp
    );
    //
    // ---------------- MODULE DESIGN IMPLEMENTATION ----------------
