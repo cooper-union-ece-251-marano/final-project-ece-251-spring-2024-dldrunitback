@@ -25,7 +25,7 @@ module maindec
     output logic       branch, alusrc,
     output logic       regdst, regwrite,
     output logic       jump,
-    output logic [1:0] aluop
+    output logic [3:0] aluop
 );
     //
     // ---------------- MODULE DESIGN IMPLEMENTATION ----------------
