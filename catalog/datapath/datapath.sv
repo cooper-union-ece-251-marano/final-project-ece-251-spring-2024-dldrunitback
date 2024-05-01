@@ -21,7 +21,7 @@
 `include "../adder/adder.sv"
 `include "../sl2/sl2.sv"
 `include "../mux2/mux2.sv"
-`include "../signext/signext.sv"
+//`include "../signext/signext.sv"
 
 module datapath
     #(parameter WIDTH = 16)(
@@ -36,7 +36,7 @@ module datapath
     input  logic        regdst,
     input  logic        regwrite,
     input  logic        jump,
-    input  logic [2:0]  alucontrol,
+    input  logic [3:0]  alucontrol,
     output logic        zero,
     output logic [WIDTH-1:0] pc,
     input  logic [WIDTH-1:0] instr,
@@ -47,11 +47,15 @@ module datapath
     //
     // ---------------- MODULE DESIGN IMPLEMENTATION ----------------
     //
-    logic [4:0]  writereg;
+    logic [3:0]  writereg;
     logic [WIDTH-1:0] pc_next, pc_br_next, pc_plus2, pc_branch;
     logic [WIDTH-1:0] sign_imm, sign_imm_shifted;
     logic [WIDTH-1:0] src_a, src_b;
     logic [WIDTH-1:0] alu_result;
+    logic [15:0] jump_target_address;
+    logic [15:0] shifted_instr;
+
+endmodule
 
     // "Next PC" logic
     dff #(WIDTH) pc_register(
@@ -95,24 +99,71 @@ module datapath
     .y(pc_br_next)
     );
 
+    assign shifted_instr = instr << 2;
+    assign jump_target_address = {pc_plus2[15:12], shifted_instr[15:0]};
+
     mux2 #(WIDTH) pc_jump_mux(
     .a(pc_br_next),
-    .b({pc_plus2[15:12], instr[11:0], 2'b00}[15:0]),
+    .b(jump_target_address),
     .sel(jump),
     .enable(1'b1),
     .y(pc_next)
     );
+   
    //mux2 #(WIDTH) pc_jump_mux(pc_br_next, {pc_plus2[15:12], instr[11:0], 2'b00}, jump, pc_next);
 
     // Register file logic
-    regfile register_file(clk, regwrite, instr[11:8], instr[7:4], writereg, alu_result, src_a, writedata);
-    mux2 #(5) write_reg_mux(instr[7:4], instr[3:0], regdst, writereg);
-    mux2 #(WIDTH) result_mux(aluout, readdata, memtoreg, alu_result);
-    signext sign_extender(instr[15:0], sign_imm);
 
-    // ALU logic
-    mux2 #(WIDTH) src_b_mux(writedata, sign_imm, alusrc, src_b);
-    //alu alu_unit(clk, src_a, src_b, alucontrol, aluout, zero);
+    regfile #(WIDTH) register_file(
+    .clock(clk),
+    .write_enable(regwrite),
+    .read_address1(instr[11:8]), 
+    .read_address2(instr[7:4]),
+    .write_address(writereg),
+    .write_data(alu_result),
+    .read_data1(src_a),
+    .read_data2(writedata)
+    );
+
+    mux2 #(4) write_reg_mux(
+    .a(instr[7:4]),  
+    .b(instr[3:0]),   
+    .sel(regdst),
+    .enable(1'b1),  
+    .y(writereg)    
+);
+
+    mux2 #(WIDTH) result_mux(
+    .a(aluout),      
+    .b(readdata),    
+    .sel(memtoreg), 
+    .enable(1'b1),   
+    .y(alu_result)  
+);
+
+//signext sign_extender(
+  //  .in(instr[15:0]),
+   // .enable(1'b1),
+   // .out(sign_imm)
+//);
+//dont need sign extend bc we are staying in 16b right?
+
+mux2 #(WIDTH) src_b_mux(
+    .a(writedata),   
+    .b(sign_imm),    
+    .sel(alusrc),  
+    .enable(1'b1),   
+    .y(src_b)    
+);
+
+alu alu_unit(
+    .alu_control(alucontrol),
+    .A(src_a),
+    .B(src_b),
+    .alu_result(aluout),
+// need a clock in ALU??
+    .Zero(zero)
+);
 
 endmodule
 

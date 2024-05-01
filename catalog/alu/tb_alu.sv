@@ -15,8 +15,9 @@
 
 `include "alu.sv"
 
-module ALU16Bit_tb;
+module tb_alu;
 
+    
     parameter n = 16; 
     reg [3:0] alu_control;
     reg [n-1:0] A, B;

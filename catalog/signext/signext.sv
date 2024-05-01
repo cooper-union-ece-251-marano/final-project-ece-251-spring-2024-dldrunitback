@@ -17,8 +17,8 @@
 `timescale 1ns/100ps
 
 module signext # (
-  parameter InputWidth  = 8, //input is an 8b number
-  parameter OutputWidth = 16 //output is a 16b number
+  parameter InputWidth  = 16, //input is an 16b number
+  parameter OutputWidth = 32 //output is a 32b number
 )
    //
    // ---------------- PORT DEFINITIONS ----------------

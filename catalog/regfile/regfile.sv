@@ -15,7 +15,7 @@
 
 `timescale 1ns/100ps
 
-module regfile # (parameter DATA_WIDTH = 16, parameter ADDR_WIDTH = 5) (
+module regfile # (parameter DATA_WIDTH = 16, parameter ADDR_WIDTH = 4) (
     //
     // ---------------- PORT DEFINITIONS ----------------
     //

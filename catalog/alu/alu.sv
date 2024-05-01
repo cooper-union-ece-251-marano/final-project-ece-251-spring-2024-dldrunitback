@@ -15,7 +15,7 @@
 
 `timescale 1ns/100ps
 
-module ALU16Bit #(parameter n = 16) (
+module alu #(parameter n = 16) (
     //
     // ---------------- PORT DEFINITIONS ----------------
     //

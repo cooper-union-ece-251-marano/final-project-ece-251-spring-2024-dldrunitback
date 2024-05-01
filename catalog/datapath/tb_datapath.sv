@@ -10,28 +10,33 @@
 // Revision: 1.0
 //
 //////////////////////////////////////////////////////////////////////////////////
+`ifndef TB_DATAPATH
+`define TB_DATAPATH
+
 `timescale 1ns/100ps
 
-`include "datapath.sv"
 
 module datapath_tb;
 
-    // Parameters
     parameter WIDTH = 16;
-    parameter CLK_PERIOD = 10;
+    reg clk;        // Clock signal
+    reg reset;      // Reset signal
+    reg memtoreg;   // Memory to register control
+    reg pcsrc;      // PC source control
+    reg alusrc;     // ALU source control
+    reg regdst;     // Register destination control
+    reg regwrite;   // Register write enable control
+    reg jump;       // Jump control
+    reg [3:0] alucontrol; // ALU control signal
+    wire zero;      // Zero flag from ALU
+    wire [WIDTH-1:0] pc; // Program counter output
+    reg [WIDTH-1:0] instr; // Instruction input
+    wire [WIDTH-1:0] aluout; // ALU output
+    wire [WIDTH-1:0] writedata; // Write data to memory or register file
+    reg [WIDTH-1:0] readdata; // Read data from memory
 
-    // Inputs
-    logic clk, reset;
-    logic memtoreg, pcsrc, alusrc, regdst, regwrite, jump;
-    logic [2:0] alucontrol;
-    logic [WIDTH-1:0] instr, readdata;
-
-    // Outputs
-    logic zero;
-    logic [WIDTH-1:0] pc, aluout, writedata;
-
-    // Instantiate the datapath module
-    datapath #(WIDTH) dut (
+    // Instantiate the UUT (Unit Under Test)
+    datapath #(WIDTH) uut (
         .clk(clk),
         .reset(reset),
         .memtoreg(memtoreg),
@@ -50,14 +55,14 @@ module datapath_tb;
     );
 
     // Clock generation
-    always begin
-        # (CLK_PERIOD / 2) clk = ~clk;
+    initial begin
+        clk = 0;
+        forever #5 clk = ~clk; // Generate clock with 10ns period (5ns high, 5ns low)
     end
 
-    // Test procedure
+    // Test bench
     initial begin
-        // Initialize inputs
-        clk = 0;
+        // Initialize control signals and instruction input
         reset = 1;
         memtoreg = 0;
         pcsrc = 0;
@@ -65,37 +70,41 @@ module datapath_tb;
         regdst = 0;
         regwrite = 0;
         jump = 0;
-        alucontrol = 3'b000;
-        instr = 16'd0;
-        readdata = 16'd0;
+        alucontrol = 4'b0000; // Initial ALU control (AND operation)
+        instr = 16'h0000; // Initial instruction
+        readdata = 16'h0000; // Initial read data
 
-        // Reset the DUT
-        # CLK_PERIOD;
-        reset = 0;
+        #10;
+        reset = 0; // Release reset signal
 
-        // Add your test cases here
-        // Example: Perform a test with a specific instruction
-        // Update inputs as needed, and observe outputs
-        // Test Case 1: Simple addition operation
-        instr = 16'b0000000000000001; // Sample instruction (change as needed)
-        alusrc = 1;
-        alucontrol = 3'b000; // ALU control for addition
+        // Test case: ALU operation (AND)
+        alucontrol = 4'd0; // AND operation
+        instr = 16'h1234; // Sample instruction
+        readdata = 16'hFFFF; // Sample read data
+        memtoreg = 0;
+        alusrc = 0;
+        regdst = 0;
         regwrite = 1;
-        regdst = 1;
+        #10; // Wait for operation to take effect
+        $display("Test 1: AND operation");
+        $display("PC: %h, ALU out: %h, Write data: %h, Zero: %b", pc, aluout, writedata, zero);
+        
+        // Add additional test cases for other operations, e.g.:
+        // - OR operation
+        // - ADD operation
+        // - SUB operation
+        // - MUL operation
+        // - Memory operations (memtoreg, readdata, etc.)
+        // - Branching operations (pcsrc, jump)
+        // - Reset behavior and initialization
 
-        // Apply test inputs and wait for some time
-        # (CLK_PERIOD * 2);
+        // Repeat the structure of the first test case for each operation, adjusting the control signals and inputs as necessary.
 
-        // Check results
-        $display("Test Case 1: Addition Operation");
-        $display("PC: %h, ALU Output: %h, Write Data: %h", pc, aluout, writedata);
+        // Continue adding other test cases...
 
-        // Add more test cases here
-
-        // End simulation
-        $finish;
+        $finish; // End the simulation
     end
 
-    // Additional functions for testing can be defined here
-
 endmodule
+
+`endif // TB_DATAPATH
