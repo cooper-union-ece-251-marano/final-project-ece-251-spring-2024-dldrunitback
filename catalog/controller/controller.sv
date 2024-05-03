@@ -40,7 +40,7 @@ module controller
     // CPU main decoder
     maindec md(op, memtoreg, memwrite, branch, alusrc, regdst, regwrite, jump, aluop);
     // CPU's ALU decoder
-    aludec  ad(aluop, alucontrol);
+    aludec  ad(aluop, funct, alucontrol);
 
   assign pcsrc = branch & zero;
 

@@ -25,7 +25,7 @@ module tb_alu;
     wire Zero;
 
     // Instantiate
-    ALU16Bit #(n) uut (
+    alu #(n) uut (
         .alu_control(alu_control),
         .A(A),
         .B(B),

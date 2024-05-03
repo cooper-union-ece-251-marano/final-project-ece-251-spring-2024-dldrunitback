@@ -1,15 +1,16 @@
 //////////////////////////////////////////////////////////////////////////////////
 // The Cooper Union
 // ECE 251 Spring 2024
-// Engineer: Prof Rob Marano
+// Engineer: Isabel Zulawski and Siann Han
 // 
-//     Create Date: 2023-02-07
+//     Create Date: 2024-05-01
 //     Module Name: datapath
 //     Description: 32-bit RISC-based CPU datapath (MIPS)
 //
 // Revision: 1.0
 //
 //////////////////////////////////////////////////////////////////////////////////
+
 `ifndef DATAPATH
 `define DATAPATH
 
@@ -55,13 +56,12 @@ module datapath
     logic [15:0] jump_target_address;
     logic [15:0] shifted_instr;
 
-endmodule
 
     // "Next PC" logic
     dff #(WIDTH) pc_register(
     .d(pc_next),
     .clk(clk),
-    .rst(1'b0),
+    .rst(reset),
     .en(1'b1),
     .q(pc)
     );

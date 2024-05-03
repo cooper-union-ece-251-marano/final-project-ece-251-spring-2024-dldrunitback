@@ -63,12 +63,9 @@ end
 endmodule
 
 `endif // REGFILE
-<<<<<<< Updated upstream
 
 
 
         
 
     
-=======
->>>>>>> Stashed changes

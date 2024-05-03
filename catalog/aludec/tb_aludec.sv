@@ -25,14 +25,12 @@ module tb_aludec;
     reg [3:0] expected_controls [15:0];
     reg [3:0] expected_alu_control;
 
-    // Instantiate the aludec module
     aludec dut (
         .op(op),
         .funct(funct),
         .alu_control(alu_control)
     );
 
-    // Task to display results
     task display_results;
         input [3:0] test_op;
         input [5:0] test_funct;
@@ -43,9 +41,8 @@ module tb_aludec;
         end
     endtask
     
-    // Initial block containing the test cases
     initial begin
-        // Define expected ALU controls for each function and operation
+    
         expected_controls[0] = 4'b0000; // AND
         expected_controls[1] = 4'b0001; // OR
         expected_controls[2] = 4'b0010; // ADD
@@ -59,9 +56,7 @@ module tb_aludec;
         expected_controls[10] = 4'b1110; // SLTU
         expected_controls[11] = 4'b1111; // SRA
         
-        // Test different combinations of function codes
-        // For the same value of op, vary the function code and verify the alu_control output
-        // Examples of test cases (add more as needed):
+       
         funct = 6'b100100; op = 4'b0000; expected_alu_control = 4'b0000;
         #10; display_results(op, funct, expected_alu_control, alu_control);
 
