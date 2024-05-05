@@ -25,7 +25,7 @@ module maindec
     output logic       branch, alusrc,
     output logic       regdst, regwrite,
     output logic       jump,
-    output logic [3:0] aluop
+    output logic [1:0] aluop
 );
     //
     // ---------------- MODULE DESIGN IMPLEMENTATION ----------------
@@ -38,12 +38,12 @@ module maindec
 
     always @* begin
         case(op)
-            6'b00000: controls <= 9'b11000010; // RTYPE
-            6'b10001: controls <= 9'b10101000; // LW
-            6'b10101: controls <= 9'b00100000; // SW
-            6'b00010: controls <= 9'b00010001; // BEQ
-            6'b00100: controls <= 9'b10100000; // ADDI
-            6'b00000: controls <= 9'b00000100; // J
+            6'b000000: controls <= 9'b110000010; // RTYPE
+            6'b100011: controls <= 9'b101001000; // LW
+            6'b101011: controls <= 9'b001010000; // SW
+            6'b000100: controls <= 9'b000100001; // BEQ
+            6'b001000: controls <= 9'b101000000; // ADDI
+            6'b000010: controls <= 9'b000000100; // J
             default:   controls <= 9'bxxxxxxxxx; // illegal operation
         endcase
     end

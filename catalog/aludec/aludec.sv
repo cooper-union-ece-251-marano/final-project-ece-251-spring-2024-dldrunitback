@@ -21,7 +21,7 @@ module aludec
     //
     // ---------------- PORT DEFINITIONS ----------------
     //
-     input [3:0] op, 
+     input [1:0] aluop, 
      input [5:0] funct,
     output reg [3:0] alu_control
 );
@@ -30,8 +30,13 @@ module aludec
     // ---------------- MODULE DESIGN IMPLEMENTATION ----------------
     //
 //based on ALU ordering from design attached to ALU module
-    always @(*) begin
-        case (funct)
+    always @(*) 
+    begin
+        case(aluop)
+        2'b00: alu_control = 4'b0010; //add
+        2'b01: alu_control = 4'b0110; //sub
+        default:
+            case (funct)
             6'b100100: alu_control = 4'b0000; // AND 
             6'b100101: alu_control = 4'b0001; // OR 
             6'b100000: alu_control = 4'b0010; // ADD 
@@ -50,7 +55,8 @@ module aludec
             6'b000011: alu_control = 4'b1111; // SRA 
             default: alu_control = 4'b0010; // Default to ADD operation
         endcase
-    end
+    endcase
+end
 
 endmodule
 

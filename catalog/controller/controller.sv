@@ -23,7 +23,8 @@ module controller
     //
     // ---------------- PORT DEFINITIONS ----------------
     //
-    input  logic [5:0] op, funct,
+    input  logic [5:0] op,
+    input logic [5:0] funct,
     input  logic       zero,
     output logic       memtoreg, memwrite,
     output logic       pcsrc, alusrc,
@@ -34,7 +35,7 @@ module controller
     //
     // ---------------- MODULE DESIGN IMPLEMENTATION ----------------
     //
-    logic [3:0] aluop;
+    logic [1:0] aluop;
     logic       branch;
     
     // CPU main decoder

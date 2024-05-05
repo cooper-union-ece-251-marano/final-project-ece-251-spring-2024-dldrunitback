@@ -114,7 +114,7 @@ module datapath
 
     // Register file logic
 
-    regfile #(WIDTH) register_file(
+    regfile #(WIDTH) rf(
     .clock(clk),
     .write_enable(regwrite),
     .read_address1(instr[11:8]), 
@@ -156,7 +156,7 @@ mux2 #(WIDTH) src_b_mux(
     .y(src_b)    
 );
 
-alu alu_unit(
+alu alu(
     .alu_control(alucontrol),
     .A(src_a),
     .B(src_b),

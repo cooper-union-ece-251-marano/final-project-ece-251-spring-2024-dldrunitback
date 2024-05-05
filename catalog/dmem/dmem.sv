@@ -28,7 +28,7 @@ module dmem
     //
     // ---------------- MODULE DESIGN IMPLEMENTATION ----------------
     //
-    logic [(n-1):0] RAM[0:(2**r-1)];
+    logic [(n-1):0] RAM[(2**r-1):0];
 
     assign readdata = {RAM[addr], RAM[addr + 1]};
 

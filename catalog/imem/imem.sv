@@ -34,5 +34,5 @@ module imem
 
 endmodule
 
-`endif // IMEM
+`endif //  imem
 
