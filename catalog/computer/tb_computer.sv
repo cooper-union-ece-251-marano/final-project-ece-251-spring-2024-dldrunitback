@@ -32,21 +32,32 @@ module tb_computer;
 
   // instantiate the CPU as the device to be tested
   computer dut(clk, reset, writedata, dataadr, memwrite);
-  // generate clock to sequence tests
-  // always
-  //   begin
-  //     clk <= 1; # 5; clk <= 0; # 5;
-  //   end
+  //generate clock to sequence tests
+  always
+     begin
+       clk <= 1; # 5; clk <= 0; # 5;
+     end
 
   // instantiate the clock
-  clock dut1(.enable(clk_enable), .clk(clk));
+  //clock dut1(.enable(clk_enable), .clk(clk));
+  always @(posedge clk) begin
+    $display("CLK: %h", clk);
+    end
 
+  // Adding wires to monitor `pc` and `instr`
+    wire [15:0] pc_out;
+    wire [15:0] instr_out;
+  
+  always @(posedge clk) begin
+        $display("Time: %t | IMEM Addr: %h | Fetched Instruction: %h", $time, dut.mips.dp.pc, dut.instr);
+    end
 
   initial begin
+
     firstTest = 1'b0;
     secondTest = 1'b0;
     $dumpfile("tb_computer.vcd");
-    $dumpvars(0,dut1,dut,clk,reset,writedata,dataadr,memwrite);
+    $dumpvars(0,dut,clk,reset,writedata,dataadr,memwrite);
     //$monitor("t=%t\t0x%7h\t%7d\t%8d",$realtime,writedata,dataadr,memwrite);
     // $dumpvars(0,clk,a,b,ctrl,result,zero,negative,carryOut,overflow);
     // $display("Ctl Z  N  O  C  A                    B                    ALUresult");

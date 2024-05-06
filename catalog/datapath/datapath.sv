@@ -99,8 +99,8 @@ module datapath
     .y(pc_br_next)
     );
 
-    assign shifted_instr = instr << 2;
-    assign jump_target_address = {pc_plus2[15:12], shifted_instr[15:0]};
+    assign shifted_instr = instr << 1;
+    assign jump_target_address = {pc_plus2[15:12], shifted_instr[11:0]};
 
     mux2 #(WIDTH) pc_jump_mux(
     .a(pc_br_next),
@@ -141,11 +141,7 @@ module datapath
     .y(alu_result)  
 );
 
-//signext sign_extender(
-  //  .in(instr[15:0]),
-   // .enable(1'b1),
-   // .out(sign_imm)
-//);
+assign signimm = instr; 
 //dont need sign extend bc we are staying in 16b right?
 
 mux2 #(WIDTH) src_b_mux(
