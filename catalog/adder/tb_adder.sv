@@ -41,7 +41,7 @@ module tb_adder;
         invect = i;
          a = invect; // a will increase during this test, but can be anything
          b = 8'b00000001; //b will be 1, but can be anything
-         cin = 1'b1; //cin is set to be 1, but could also be 0
+         cin = 1'b0; //cin is set to be 0, but could also be 1
          enable = 1'b1; //circuit is enabled
          #10 $display("a=%b, b=%b, cin=%b, enable=%b, Cout=%b, S=%b", a, b, cin, enable, Cout, S);
         #10;

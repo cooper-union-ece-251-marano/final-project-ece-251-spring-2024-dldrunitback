@@ -13,19 +13,25 @@
 `ifndef TB_ALU
 `define TB_ALU
 
+`timescale 1ns/100ps
+
 `include "alu.sv"
 
 module tb_alu;
 
-    
+    // Parameter for ALU bit width
     parameter n = 16; 
+
+    // Declare inputs and outputs for the ALU
+    reg clk; // Clock signal
     reg [3:0] alu_control;
-    reg [n-1:0] A, B;
-    wire [n-1:0] alu_result;
+    reg [n - 1:0] A, B;
+    wire [n - 1:0] alu_result;
     wire Zero;
 
-    // Instantiate
+    // Instantiate the ALU module
     alu #(n) uut (
+        .clk(clk), // Connect the clock
         .alu_control(alu_control),
         .A(A),
         .B(B),
@@ -33,23 +39,32 @@ module tb_alu;
         .Zero(Zero)
     );
 
-    // Display results
-    task display_result;
-        input [3:0] alu_control;
-        input [n-1:0] A, B, alu_result;
-        input Zero;
+    // Clock generation
+    initial begin
+        clk = 0;
+        forever #5 clk = ~clk; // Toggle clock every 5 ns (100 MHz)
+    end
+
+    // Task to display results
+    task display_result(
+        input [3:0] alu_control,
+        input [n - 1:0] A,
+        input [n - 1:0] B,
+        input [n - 1:0] alu_result,
+        input Zero
+    );
         begin
-            $display("alu_control: %b, A: %h, B: %h, alu_result: %h, Zero: %b", alu_control, A, B, alu_result, Zero);
+            $display("ALU Control: %b, A: %h, B: %h, ALU Result: %h, Zero: %b", alu_control, A, B, alu_result, Zero);
         end
     endtask
 
-    // Test bench
+    // Test cases
     initial begin
         // Test case: AND operation
         alu_control = 4'd0; // alu_control = 0 for AND
         A = 16'hAAAA; // Example input A
         B = 16'h5555; // Example input B
-        #10; // Wait for 10 ns for the operation to take effect
+        #10; // Wait for the clock
         display_result(alu_control, A, B, alu_result, Zero);
 
         // Test case: OR operation
@@ -96,7 +111,7 @@ module tb_alu;
 
         // Test case: SLL operation
         alu_control = 4'd10; // alu_control = 10 for SLL
-        A = 16'h0001; // Shift A left by B
+        A = 16'h0001; // Example input A
         B = 16'h0004; // Shift amount
         #10;
         display_result(alu_control, A, B, alu_result, Zero);
@@ -111,11 +126,11 @@ module tb_alu;
         // Test case: CLO/CLZ operation
         alu_control = 4'd12; // alu_control = 12 for CLO/CLZ
         A = 16'h00FF; // Example input A
-        B = 16'h0; // CLO
+        B = 16'h0000; // CLO test
         #10;
         display_result(alu_control, A, B, alu_result, Zero);
         // Test for CLZ
-        B = 16'h1; // CLZ
+        B = 16'h0001; // CLZ test
         #10;
         display_result(alu_control, A, B, alu_result, Zero);
 
@@ -142,12 +157,12 @@ module tb_alu;
 
         // Test case: Sign Extension operation
         alu_control = 4'd5; // alu_control = 5 for Sign Extension
-        A = 16'h00FF; // Example input A (byte to extend)
-        B = 16'h0; // Extend byte
+        A = 16'h00FF; // Example input A
+        B = 16'h0000; // Byte (8-bit) extension
         #10;
         display_result(alu_control, A, B, alu_result, Zero);
-        // Test for half-word
-        B = 16'h1; // Extend half-word
+        // Test for half-word extension
+        B = 16'h0001; // Half-word (16-bit) extension
         #10;
         display_result(alu_control, A, B, alu_result, Zero);
 
@@ -158,6 +173,7 @@ module tb_alu;
         #10;
         display_result(alu_control, A, B, alu_result, Zero);
 
+        // Complete the simulation
         $finish;
     end
 
