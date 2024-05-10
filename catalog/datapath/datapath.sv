@@ -3,7 +3,6 @@
 // ECE 251 Spring 2024
 // Engineer: Isabel Zulawski and Siann Han
 // 
-//     Create Date: 2024-05-01
 //     Module Name: datapath
 //     Description: 32-bit RISC-based CPU datapath (MIPS)
 //

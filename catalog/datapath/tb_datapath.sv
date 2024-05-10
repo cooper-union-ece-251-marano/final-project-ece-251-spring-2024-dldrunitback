@@ -2,8 +2,7 @@
 // The Cooper Union
 // ECE 251 Spring 2024
 // Engineer: Isabel Zulawski and Siann Han
-// 
-//     Create Date: 2024-05-01
+//
 //     Module Name: tb_datapath
 //     Description: Test bench for datapath
 //

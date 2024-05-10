@@ -3,7 +3,6 @@
 // ECE 251 Spring 2024
 // Engineer: Isabel Zulawski & Siann Han
 // 
-//     Create Date: 2024-05-28
 //     Module Name: clock
 //     Description: Clock generator; duty cycle = 50%
 //

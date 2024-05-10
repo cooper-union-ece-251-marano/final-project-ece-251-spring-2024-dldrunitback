@@ -3,7 +3,6 @@
 // ECE 251 Spring 2024
 // Engineer: Isabel Zulawski & Siann Han
 // 
-//     Create Date: 2024-05-29
 //     Module Name: controller
 //     Description: 16-bit RISC-based CPU controller (MIPS)
 //

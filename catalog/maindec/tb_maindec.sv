@@ -1,9 +1,8 @@
 //////////////////////////////////////////////////////////////////////////////////
 // The Cooper Union
 // ECE 251 Spring 2024
-// Engineer: YOUR NAMES
-// 
-//     Create Date: 2023-02-07
+// Engineer: Isabel Zulawski and Siann Han
+//
 //     Module Name: tb_maindec
 //     Description: Test bench for simple behavorial main decoder
 //

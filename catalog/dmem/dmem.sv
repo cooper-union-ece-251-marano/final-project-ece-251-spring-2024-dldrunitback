@@ -1,9 +1,8 @@
 //////////////////////////////////////////////////////////////////////////////////
 // The Cooper Union
 // ECE 251 Spring 2024
-// Engineer: Siann Han and Isabel Zulawski
+// Engineer: Isabel Zulawski and Siann Han
 // 
-//     Create Date: 2024-04-27
 //     Module Name: dmem
 //     Description: 16-bit RISC memory ("data" segment)
 //

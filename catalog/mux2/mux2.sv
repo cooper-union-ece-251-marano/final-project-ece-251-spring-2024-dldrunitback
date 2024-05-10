@@ -3,7 +3,6 @@
 // ECE 251 Spring 2024
 // Engineer: Isabel Zulawski & Siann Han
 // 
-//     Create Date: 2024-05-28
 //     Module Name: mux2
 //     Description: 2 to 1 multiplexer
 //

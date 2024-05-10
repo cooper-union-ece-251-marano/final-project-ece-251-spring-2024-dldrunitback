@@ -3,7 +3,6 @@
 // ECE 251 Spring 2024
 // Engineer: Isabel Zulawski and Siann Han
 // 
-//     Create Date: 2024-05-28
 //     Module Name: dff
 //     Description: 16 bit D flip flop
 //
