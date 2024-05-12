@@ -12,65 +12,68 @@
 ////////////////////////////////////////////////////////////////////////////////
 `ifndef TB_DMEM
 `define TB_DMEM
-
-`timescale 1ns/100ps
-`include "dmem.sv"
-`include "../clock/clock.sv"
+`timescale 1ns / 100ps
 
 module tb_dmem;
-    parameter n = 16; // bit length of registers/memory
-    parameter r = 6; // we are only addressing 64=2**6 mem slots in imem
-    logic [(n-1):0] readdata, writedata;
-    logic [(r-1):0] dmem_addr; // Address bus width corrected to r-1
-    logic write_enable;
-    logic clk, clock_enable;
 
-   initial begin
-        $dumpfile("dmem.vcd");
-        $dumpvars(0, tb_dmem); // Updated instance name
-        $monitor("time=%0t write_enable=%b dmem_addr=%h readdata=%h writedata=%h",
-            $realtime, write_enable, dmem_addr, readdata, writedata);
-    end
+    parameter ADDR_WIDTH = 6;
+    parameter DATA_WIDTH = 16;
 
-    initial begin
-        clock_enable <= 0;
-        clk <= 0;
-        #5 clock_enable <= 1; // Start the clock after a delay
-        #10; // Wait for the clock to stabilize
+    // Inputs
+    reg clk = 0;
+    reg write_enable;
+    reg [ADDR_WIDTH-1:0] addr;
+    reg [DATA_WIDTH-1:0] writedata;
 
-        // Write and read sequences
-        writedata = 16'hFFFF;
-        dmem_addr = 0;
-        write_enable = 1;
-        #20; // Write first value
-        write_enable = 0;
-        
-        #10; // Change data and address
-        writedata = 16'hA5A5;
-        dmem_addr = 1;
-        write_enable = 1;
-        #20; // Write second value
-        write_enable = 0;
-        
-        #10; // Prepare to end simulation
-        $finish;
-    end
+    // Outputs
+    wire [DATA_WIDTH-1:0] readdata;
 
-    // Clock generator instance
-    always #10 clk = !clk; // Toggles the clock every 10ns
-
-    dmem uut(
+    // Instantiate the Unit Under Test (UUT)
+    dmem #(.ADDR_WIDTH(ADDR_WIDTH), .DATA_WIDTH(DATA_WIDTH)) uut (
         .clk(clk),
         .write_enable(write_enable),
-        .addr(dmem_addr),
+        .addr(addr),
         .writedata(writedata),
         .readdata(readdata)
     );
-    clock uut1(
-        .ENABLE(clock_enable),
-        .CLOCK(clk)
-    );
+
+    // Clock generation
+    always #5 clk = !clk; // Generate a clock with a period of 10 ns
+
+    // Test scenarios
+    initial begin
+        // Initialize inputs
+        write_enable = 0;
+        addr = 0;
+        writedata = 0;
+
+        // Wait for global reset
+        #100;
+
+        // Write Test
+        write_enable = 1;
+        addr = 5;
+        writedata = 16'h1234;
+        #10; // Wait a clock cycle for write
+
+        write_enable = 0;
+        #10; // Wait a clock cycle to stabilize
+
+        // Read Test
+        addr = 5;
+        #10; // Wait a clock cycle for read
+
+        // Check result
+        if (readdata !== 16'h1234) begin
+            $display("Test failed at addr %d: expected 0x1234, got %h", addr, readdata);
+        end else begin
+            $display("Test passed at addr %d: expected 0x1234, got %h", addr, readdata);
+        end
+
+        // End simulation
+        $finish;
+    end
+
 endmodule
 
 `endif // TB_DMEM
-

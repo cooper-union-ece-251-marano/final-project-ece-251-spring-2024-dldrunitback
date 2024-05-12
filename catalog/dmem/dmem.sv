@@ -9,35 +9,32 @@
 // Revision: 1.0
 //
 //////////////////////////////////////////////////////////////////////////////////
+`timescale 1ns / 100ps
+
 `ifndef DMEM
 `define DMEM
 
-`timescale 1ns/100ps
-
 module dmem
-// n=bit length of register; r=bit length of addr to limit memory and not crash your verilog emulator
-    #(parameter n = 16, parameter r = 6)(
-    //
-    // ---------------- PORT DEFINITIONS ----------------
-    //
-    input  logic clk, write_enable,
-    input  logic [(n-1):0] addr, writedata,
-    output logic [(n-1):0] readdata
+    #(parameter ADDR_WIDTH = 6, DATA_WIDTH = 16)(
+    input  logic clk,
+    input  logic write_enable,
+    input  logic [ADDR_WIDTH-1:0] addr,
+    input  logic [DATA_WIDTH-1:0] writedata,
+    output logic [DATA_WIDTH-1:0] readdata
 );
-    //
-    // ---------------- MODULE DESIGN IMPLEMENTATION ----------------
-    //
-    logic [(n-1):0] RAM[(2**r-1):0];
 
-    assign readdata = {RAM[addr], RAM[addr + 1]};
+    // Define memory space
+    logic [DATA_WIDTH-1:0] RAM[(2**ADDR_WIDTH)-1:0];
 
-    // Clock generation
+    // Handle memory read
+    assign readdata = RAM[addr];
+
+    // Handle memory write on positive clock edge
     always @(posedge clk) begin
-    if (write_enable) begin
-        RAM[addr] <= writedata[15:8];    // High byte
-        RAM[addr + 1] <= writedata[7:0]; // Low byte
+        if (write_enable) begin
+            RAM[addr] <= writedata;
+        end
     end
-end
 
 endmodule
 
