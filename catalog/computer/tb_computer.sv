@@ -77,7 +77,7 @@ module tb_computer;
       $display("\t+op = 0b%6b",dut.mips.c.op);
       $display("\t+controls = 0b%9b",dut.mips.c.md.controls);
       $display("\t+funct = 0b%6b",dut.mips.c.ad.funct);
-      $display("\t+aluop = 0b%2b",dut.mips.c.ad.aluop); //changed aluop to op
+      $display("\t+op = 0b%2b",dut.mips.c.ad.op); //changed aluop to op
       $display("\t+alucontrol = 0b%3b",dut.mips.c.ad.alu_control); //changed alucontrol to alu_control
       $display("\t+alu result = 0x%8h",dut.mips.dp.alu.alu_result); //changed result to alu_result
       $display("\t+Zero = 0x%8h",dut.mips.dp.alu.Zero);
@@ -106,7 +106,7 @@ module tb_computer;
     $display("\t-op = 0b%6b",dut.mips.c.op);
     $display("\t-controls = 0b%9b",dut.mips.c.md.controls);
     $display("\t-funct = 0b%6b",dut.mips.c.ad.funct);
-    $display("\t-aluop = 0b%2b",dut.mips.c.ad.aluop);
+    $display("\t-op = 0b%2b",dut.mips.c.ad.op);
     $display("\t-alucontrol = 0b%3b",dut.mips.c.ad.alu_control);
     $display("\t-alu result = 0x%8h",dut.mips.dp.alu.alu_result);
     $display("\t-HiLo = 0x%8h",dut.mips.dp.alu.Zero);

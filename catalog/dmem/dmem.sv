@@ -15,7 +15,7 @@
 `define DMEM
 
 module dmem
-    #(parameter ADDR_WIDTH = 6, DATA_WIDTH = 16)(
+    #(parameter ADDR_WIDTH = 16, DATA_WIDTH = 16)(
     input  logic clk,
     input  logic write_enable,
     input  logic [ADDR_WIDTH-1:0] addr,
