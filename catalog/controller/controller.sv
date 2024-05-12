@@ -1,11 +1,10 @@
 //////////////////////////////////////////////////////////////////////////////////
 // The Cooper Union
 // ECE 251 Spring 2024
-// Engineer: Prof Rob Marano
+// Engineer: Isabel Zulawski & Siann Han
 // 
-//     Create Date: 2023-02-07
 //     Module Name: controller
-//     Description: 32-bit RISC-based CPU controller (MIPS)
+//     Description: 16-bit RISC-based CPU controller (MIPS)
 //
 // Revision: 1.0
 //
@@ -23,13 +22,14 @@ module controller
     //
     // ---------------- PORT DEFINITIONS ----------------
     //
-    input  logic [5:0] op, funct,
+    input  logic [5:0] op,
+    input logic [5:0] funct,
     input  logic       zero,
     output logic       memtoreg, memwrite,
     output logic       pcsrc, alusrc,
     output logic       regdst, regwrite,
     output logic       jump,
-    output logic [2:0] alucontrol
+    output logic [3:0] alucontrol
 );
     //
     // ---------------- MODULE DESIGN IMPLEMENTATION ----------------
@@ -40,7 +40,7 @@ module controller
     // CPU main decoder
     maindec md(op, memtoreg, memwrite, branch, alusrc, regdst, regwrite, jump, aluop);
     // CPU's ALU decoder
-    aludec  ad(funct, aluop, alucontrol);
+    aludec  ad(aluop, funct, alucontrol);
 
   assign pcsrc = branch & zero;
 

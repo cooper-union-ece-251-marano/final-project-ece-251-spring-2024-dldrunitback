@@ -1,11 +1,10 @@
 //////////////////////////////////////////////////////////////////////////////////
 // The Cooper Union
 // ECE 251 Spring 2024
-// Engineer: Prof Rob Marano
+// Engineer: Isabel Zulawski & Siann Han
 // 
-//     Create Date: 2023-02-07
 //     Module Name: computer
-//     Description: 32-bit RISC
+//     Description: 16-bit RISC
 //
 // Revision: 1.0
 //
@@ -20,7 +19,7 @@
 `include "../dmem/dmem.sv"
 
 module computer
-    #(parameter n = 32)(
+    #(parameter n = 16)(
     //
     // ---------------- PORT DEFINITIONS ----------------
     //
@@ -38,7 +37,7 @@ module computer
     // the RISC CPU
     cpu mips(clk, reset, pc, instr, memwrite, dataadr, writedata, readdata);
     // the instruction memory ("text segment") in main memory
-    imem imem(pc[7:2], instr);
+    imem imem(pc[5:0], instr);
     // the data memory ("data segment") in main memory
     dmem dmem(clk, memwrite, dataadr, writedata, readdata);
 

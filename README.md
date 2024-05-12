@@ -1,3 +1,93 @@
+# CPU Architecture Documentation
+youtube link: https://youtu.be/h1m_fl3xouI
+
+## Instruction Format
+
+### Instruction Split
+- **Opcode (4 bits)**: `instr[15:12]` (e.g., `4'b0010` for subtraction)
+- **First Source Register (4 bits)**: `instr[11:8]`
+- **Second Source Register or Destination Register (4 bits)**: `instr[7:4]`
+- **Immediate Value or Additional Destination Register (4 bits)**: `instr[3:0]`
+
+## Specifications
+
+- **ALU Operand Size**: 16 bits
+- **Address Bus Size**: 16 bits (`0xFFFF` hexadecimal, allowing addressing of up to 65536 words or 131072 bytes in a word-addressable memory)
+- **Addressability**: Word-addressable (each memory access reads or writes a 16-bit word)
+- **Register File Size**: 16 registers, each 16 bits wide
+- **Opcode Size**: 4 bits
+- **Function Size**: 6 bits
+- **shamt Size**: 4 bits (used for shift amounts in R-type shift operations)
+- **Instruction Size**: 16 bits
+- **PC Increment**: +2 bytes (program counter increments by 2 bytes per instruction)
+- **Immediate Size**: 6 bits
+
+## Instruction Types
+
+### R-Type Instructions
+
+- **Format**: Opcode (4 bits) | Function (6 bits) | rs (3 bits) | rt (3 bits) | shamt (4 bits)
+- **Description**: R-type instructions perform arithmetic and logical operations using register operands.
+  - **Opcodes**:
+    - `0000`: ADD
+    - `0001`: SUB
+    - `0010`: AND
+    - `0011`: OR
+    - `0100`: XOR
+    - `0101`: SLT
+    - `0110`: SLL
+    - `0111`: SRL
+
+### I-Type Instructions
+
+- **Format**: Opcode (4 bits) | rs (3 bits) | rt (3 bits) | Immediate (6 bits)
+- **Description**: I-type instructions involve operations between a register and an immediate value, and memory access.
+  - **Opcodes**:
+    - `1000`: ADDI
+    - `1001`: ANDI
+    - `1010`: ORI
+    - `1011`: LW
+    - `1100`: SW
+    - `1101`: BEQ
+    - `1110`: BNE
+
+### J-Type Instructions
+
+- **Format**: Opcode (4 bits) | Address (12 bits)
+- **Description**: J-type instructions involve control flow through jumps.
+  - **Opcodes**:
+    - `1111`: J
+    - `1011`: JAL
+
+## Detailed Instruction Descriptions
+
+### R-type Instructions
+
+- **ADD**: Adds rs and rt registers, stores the result in rt.
+- **SUB**: Subtracts rs from rt, stores the result in rt.
+- **AND**: Bitwise AND of rs and rt, stores the result in rt.
+- **OR**: Bitwise OR of rs and rt, stores the result in rt.
+- **XOR**: Bitwise XOR of rs and rt, stores the result in rt.
+- **SLT**: Sets rt to 1 if rs is less than rt, otherwise sets rt to 0.
+- **SLL**: Shifts rt left logically by shamt positions.
+- **SRL**: Shifts rt right logically by shamt positions.
+
+### I-type Instructions
+
+- **ADDI**: Adds immediate value to rs, stores the result in rt.
+- **ANDI**: ANDs immediate value with rs, stores the result in rt.
+- **ORI**: ORs immediate value with rs, stores the result in rt.
+- **LW**: Loads a word from the address (rs + immediate) into rt.
+- **SW**: Stores rt at the address (rs + immediate).
+
+### J-type Instructions
+
+- **J**: Jumps to the address.
+- **JAL**: Jumps to the address and stores the return address in $ra.
+
+
+
+[![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-24ddc0f5d75046c5622901739e7c5dd533143b0c8e959d652212380cedb1ea36.svg)](https://classroom.github.com/a/pelSJLGu)
 # Catalog of Verilog Components to Build and Simulate a MIPS-based RISC.
 
 This work is based off the MIPS Verilog code by [Harris and Harris](https://pages.hmc.edu/harris/ddca/ddca2e.html)

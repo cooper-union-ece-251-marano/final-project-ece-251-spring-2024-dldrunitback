@@ -1,15 +1,15 @@
 //////////////////////////////////////////////////////////////////////////////////
 // The Cooper Union
 // ECE 251 Spring 2024
-// Engineer: Prof Rob Marano
+// Engineer: Isabel Zulawski and Siann Han
 // 
-//     Create Date: 2023-02-07
 //     Module Name: datapath
 //     Description: 32-bit RISC-based CPU datapath (MIPS)
 //
 // Revision: 1.0
 //
 //////////////////////////////////////////////////////////////////////////////////
+
 `ifndef DATAPATH
 `define DATAPATH
 
@@ -21,50 +21,144 @@
 `include "../adder/adder.sv"
 `include "../sl2/sl2.sv"
 `include "../mux2/mux2.sv"
-`include "../signext/signext.sv"
+//`include "../signext/signext.sv"
 
 module datapath
-    #(parameter n = 32)(
+    #(parameter WIDTH = 16)(
     //
     // ---------------- PORT DEFINITIONS ----------------
     //
-    input  logic        clk, reset,
-    input  logic        memtoreg, pcsrc,
-    input  logic        alusrc, regdst,
-    input  logic        regwrite, jump,
-    input  logic [2:0]  alucontrol,
+    input  logic        clk,
+    input  logic        reset,
+    input  logic        memtoreg,
+    input  logic        pcsrc,
+    input  logic        alusrc,
+    input  logic        regdst,
+    input  logic        regwrite,
+    input  logic        jump,
+    input  logic [3:0]  alucontrol,
     output logic        zero,
-    output logic [(n-1):0] pc,
-    input  logic [(n-1):0] instr,
-    output logic [(n-1):0] aluout, writedata,
-    input  logic [(n-1):0] readdata
+    output logic [WIDTH-1:0] pc,
+    input  logic [WIDTH-1:0] instr,
+    output logic [WIDTH-1:0] aluout,
+    output logic [WIDTH-1:0] writedata,
+    input  logic [WIDTH-1:0] readdata
 );
     //
     // ---------------- MODULE DESIGN IMPLEMENTATION ----------------
     //
-    logic [4:0]  writereg;
-    logic [(n-1):0] pcnext, pcnextbr, pcplus4, pcbranch;
-    logic [(n-1):0] signimm, signimmsh;
-    logic [(n-1):0] srca, srcb;
-    logic [(n-1):0] result;
+    logic [3:0]  writereg;
+    logic [WIDTH-1:0] pc_next, pc_br_next, pc_plus2, pc_branch;
+    logic [WIDTH-1:0] sign_imm, sign_imm_shifted;
+    logic [WIDTH-1:0] src_a, src_b;
+    logic [WIDTH-1:0] alu_result;
+    logic [15:0] jump_target_address;
+    logic [15:0] shifted_instr;
 
-    // "next PC" logic
-    dff #(n)    pcreg(clk, reset, pcnext, pc);
-    adder       pcadd1(pc, 32'b100, pcplus4);
-    sl2         immsh(signimm, signimmsh);
-    adder       pcadd2(pcplus4, signimmsh, pcbranch);
-    mux2 #(n)   pcbrmux(pcplus4, pcbranch, pcsrc, pcnextbr);
-    mux2 #(n)   pcmux(pcnextbr, {pcplus4[31:28], instr[25:0], 2'b00}, jump, pcnext);
 
-    // register file logic
-    regfile     rf(clk, regwrite, instr[25:21], instr[20:16], writereg, result, srca, writedata);
-    mux2 #(5)   wrmux(instr[20:16], instr[15:11], regdst, writereg);
-    mux2 #(n)   resmux(aluout, readdata, memtoreg, result);
-    signext     se(instr[15:0], signimm);
+    // "Next PC" logic
+    dff #(WIDTH) pc_register(
+    .d(pc_next),
+    .clk(clk),
+    .rst(reset),
+    .en(1'b1),
+    .q(pc)
+    );
 
-    // ALU logic
-    mux2 #(n)   srcbmux(writedata, signimm, alusrc, srcb);
-    alu         alu(clk, srca, srcb, alucontrol, aluout, zero);
+    adder #(WIDTH) pc_adder1(
+    .a(pc),             
+    .b(16'd2),          
+    .enable(1'b1),      
+    .reset(1'b0),       
+    .cin(1'b0),         
+    .S(pc_plus2),      
+    .Cout()           
+);
+
+    sl2 #(WIDTH) imm_shift(
+    .in(sign_imm),
+    .out(sign_imm_shifted)
+);
+
+    adder #(WIDTH) pc_adder2(
+    .a(pc_plus2),             
+    .b(sign_imm_shifted),          
+    .enable(1'b1),      
+    .reset(1'b0),       
+    .cin(1'b0),         
+    .S(pc_branch),      
+    .Cout()           
+    );
+    
+    mux2 #(WIDTH) pc_branch_mux(
+    .a(pc_plus2),
+    .b(pc_branch),
+    .sel(pcsrc),
+    .enable(1'b1),
+    .y(pc_br_next)
+    );
+
+    assign shifted_instr = instr << 1;
+    assign jump_target_address = {pc_plus2[15:12], shifted_instr[11:0]};
+
+    mux2 #(WIDTH) pc_jump_mux(
+    .a(pc_br_next),
+    .b(jump_target_address),
+    .sel(jump),
+    .enable(1'b1),
+    .y(pc_next)
+    );
+   
+   //mux2 #(WIDTH) pc_jump_mux(pc_br_next, {pc_plus2[15:12], instr[11:0], 2'b00}, jump, pc_next);
+
+    // Register file logic
+
+    regfile #(WIDTH) rf(
+    .clock(clk),
+    .write_enable(regwrite),
+    .read_address1(instr[11:8]), 
+    .read_address2(instr[7:4]),
+    .write_address(writereg),
+    .write_data(alu_result),
+    .read_data1(src_a),
+    .read_data2(writedata)
+    );
+
+    mux2 #(4) write_reg_mux(
+    .a(instr[7:4]),  
+    .b(instr[3:0]),   
+    .sel(regdst),
+    .enable(1'b1),  
+    .y(writereg)    
+);
+
+    mux2 #(WIDTH) result_mux(
+    .a(aluout),      
+    .b(readdata),    
+    .sel(memtoreg), 
+    .enable(1'b1),   
+    .y(alu_result)  
+);
+
+assign signimm = instr; 
+//dont need sign extend bc we are staying in 16b right?
+
+mux2 #(WIDTH) src_b_mux(
+    .a(writedata),   
+    .b(sign_imm),    
+    .sel(alusrc),  
+    .enable(1'b1),   
+    .y(src_b)    
+);
+
+alu alu(
+    .alu_control(alucontrol),
+    .A(src_a),
+    .B(src_b),
+    .alu_result(aluout),
+// need a clock in ALU??
+    .Zero(zero)
+);
 
 endmodule
 

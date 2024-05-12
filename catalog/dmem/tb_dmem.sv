@@ -1,65 +1,79 @@
-//////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 // The Cooper Union
 // ECE 251 Spring 2024
-// Engineer: Prof Rob Marano
+// Engineer: Isabel Zulawski and Siann Han
 // 
-//     Create Date: 2023-02-07
-//     Module Name: tb_dmem
-//     Description: Test bench for data memory
+//
+// Module Name: tb_dmem
+// Description: Test bench for data memory
 //
 // Revision: 1.0
 //
-//////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 `ifndef TB_DMEM
 `define TB_DMEM
-
-`timescale 1ns/100ps
-`include "dmem.sv"
-`include "../clock/clock.sv"
+`timescale 1ns / 100ps
 
 module tb_dmem;
-    parameter n = 32; // bit length of registers/memory
-    parameter r = 6; // we are only addressing 64=2**6 mem slots in imem
-    logic [(n-1):0] readdata, writedata;
-    logic [(n-1):0] dmem_addr;
-    logic write_enable;
-    logic clk, clock_enable;
 
-   initial begin
-        $dumpfile("dmem.vcd");
-        $dumpvars(0, uut, uut1);
-        $monitor("time=%0t write_enable=%b dmem_addr=%h readdata=%h writedata=%h",
-            $realtime, write_enable, dmem_addr, readdata, writedata);
-    end
+    parameter ADDR_WIDTH = 6;
+    parameter DATA_WIDTH = 16;
 
-    initial begin
-        #10 clock_enable <= 1;
-        #20 writedata = #(n)'hFFFFFFFF;
-        #20 dmem_addr <= #(r)'b000000;
-        #20 write_enable <= 1;
-        #20 write_enable <= 0;
-        #20 dmem_addr <= #(r)'b000001;
-        #20 writedata = #(n)'h0000FFFF;
-        #20 write_enable <= 1;
-        #20 write_enable <= 0;
-        #20 dmem_addr <= #(r)'b000010;
-        #20 writedata = #(n)'h00000000;
-        #20 write_enable <= 1;
-        #20 write_enable <= 0;
-        #20 $finish;
-    end
+    // Inputs
+    reg clk = 0;
+    reg write_enable;
+    reg [ADDR_WIDTH-1:0] addr;
+    reg [DATA_WIDTH-1:0] writedata;
 
-   dmem uut(
+    // Outputs
+    wire [DATA_WIDTH-1:0] readdata;
+
+    // Instantiate the Unit Under Test (UUT)
+    dmem #(.ADDR_WIDTH(ADDR_WIDTH), .DATA_WIDTH(DATA_WIDTH)) uut (
         .clk(clk),
         .write_enable(write_enable),
-        .addr(dmem_addr),
+        .addr(addr),
         .writedata(writedata),
         .readdata(readdata)
     );
-    clock uut1(
-        .ENABLE(clock_enable),
-        .CLOCK(clk)
-    );
+
+    // Clock generation
+    always #5 clk = !clk; // Generate a clock with a period of 10 ns
+
+    // Test scenarios
+    initial begin
+        // Initialize inputs
+        write_enable = 0;
+        addr = 0;
+        writedata = 0;
+
+        // Wait for global reset
+        #100;
+
+        // Write Test
+        write_enable = 1;
+        addr = 5;
+        writedata = 16'h1234;
+        #10; // Wait a clock cycle for write
+
+        write_enable = 0;
+        #10; // Wait a clock cycle to stabilize
+
+        // Read Test
+        addr = 5;
+        #10; // Wait a clock cycle for read
+
+        // Check result
+        if (readdata !== 16'h1234) begin
+            $display("Test failed at addr %d: expected 0x1234, got %h", addr, readdata);
+        end else begin
+            $display("Test passed at addr %d: expected 0x1234, got %h", addr, readdata);
+        end
+
+        // End simulation
+        $finish;
+    end
+
 endmodule
 
-`endif // TB_IMEM
+`endif // TB_DMEM
